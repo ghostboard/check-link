@@ -1,8 +1,16 @@
 # check-link
 
+## API
+
+- scanSite
+- checkUrl
+- getLinks
+
 ## Dependencies
 
 npx cost-of-modules
+
+```bash
 ┌───────────────────┬─────────────┬───────┐
 │ name              │ children    │ size  │
 ├───────────────────┼─────────────┼───────┤
@@ -20,4 +28,4 @@ npx cost-of-modules
 ├───────────────────┼─────────────┼───────┤
 │ 6 modules         │ 57 children │ 4.39M │
 └───────────────────┴─────────────┴───────┘
-
+```

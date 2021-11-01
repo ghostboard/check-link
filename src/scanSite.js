@@ -6,17 +6,32 @@ const getLinks = require('./getLinks');
 module.exports = async function (url, options = {}) {
     const {
         recursive = false,
-        unique = true,
         minInterval = 1000,
         maxInterval = 3000,
-        maxPages = false
+        maxPages = false,
+        onPageDone,
+        onPageError,
+        onEnd
     } = options;
+		const startTime = new Date().getTime();
+		let pages = 0;
     let lastRequestTime = new Date().getTime();
-    const result = await getLinks(url, options);
+		let result;
+		try {
+			result = await getLinks(url, options);
+		} catch (e) {
+			if (onPageError && typeof onPageError === 'function') {
+				onPageError(e);
+			}
+		}
     if (!recursive) {
-        return result;
+	    if (onPageDone && typeof onPageDone === 'function') {
+		    onPageDone(result);
+	    }
+	    if (onEnd && typeof onEnd === 'function') {
+		    onEnd({ pages, executionTime: (new Date().getTime()-startTime)/1000 });
+	    }
     }
-    const output = [result];
     const nextPages = [];
     result.links.forEach((link) => {
         const isSameDomain = link.startsWith(url);
@@ -36,9 +51,14 @@ module.exports = async function (url, options = {}) {
             }
             lastRequestTime = new Date().getTime();
             const lastOutput = await getLinks(page, options);
-            output.push(lastOutput);
-            if (maxPages && output.length >= maxPages) {
-                return output;
+						pages += 1;
+            if (onPageDone && typeof onPageDone === 'function') {
+                onPageDone(lastOutput);
+            }
+            if (maxPages && pages >= maxPages) {
+	            if (onEnd && typeof onEnd === 'function') {
+		            return onEnd({ pages, executionTime: (new Date().getTime()-startTime)/1000 });
+	            }
             }
             lastOutput.links.forEach((link) => {
                 const isSameDomain = link.startsWith(url);
@@ -51,7 +71,14 @@ module.exports = async function (url, options = {}) {
         } catch(e) {
             console.error(`Error scraping url=${page}`);
             console.error(e);
+            if (onPageError && typeof onPageError === 'function') {
+                onPageError(e);
+            }
         }
     }
-    return output;
+		const output = { pages, executionTime: (new Date().getTime()-startTime)/1000 };
+    if (onEnd && typeof onEnd === 'function') {
+	    onEnd(output);
+    }
+		return output;
 }
