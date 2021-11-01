@@ -69,8 +69,6 @@ module.exports = async function (url, options = {}) {
                 }
             });
         } catch(e) {
-            console.error(`Error scraping url=${page.link}`);
-            console.error(e);
             if (onPageError && typeof onPageError === 'function') {
                 onPageError({ page: page.page, url: page.link, error: e });
             }
