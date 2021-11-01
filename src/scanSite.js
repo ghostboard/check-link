@@ -21,7 +21,7 @@ module.exports = async function (url, options = {}) {
 			result = await getLinks(url, options);
 		} catch (e) {
 			if (onPageError && typeof onPageError === 'function') {
-				onPageError(e);
+				onPageError({ url, error: e });
 			}
 		}
     if (!recursive) {
@@ -33,10 +33,10 @@ module.exports = async function (url, options = {}) {
 	    }
     }
     const nextPages = [];
-    result.links.forEach((link) => {
+    result && result.links.forEach((link) => {
         const isSameDomain = link.startsWith(url);
         if (isSameDomain) {
-            nextPages.push(link);
+            nextPages.push({ page: url, link });
         }
     });
     for (const page of nextPages) {
@@ -50,7 +50,7 @@ module.exports = async function (url, options = {}) {
                 await Timeout.set(timeLeft);
             }
             lastRequestTime = new Date().getTime();
-            const lastOutput = await getLinks(page, options);
+            const lastOutput = await getLinks(page.link, options);
 						pages += 1;
             if (onPageDone && typeof onPageDone === 'function') {
                 onPageDone(lastOutput);
@@ -65,14 +65,14 @@ module.exports = async function (url, options = {}) {
                 const alreadyIncluded = nextPages.includes(link);
                 const proceed = isSameDomain && !alreadyIncluded;
                 if (proceed) {
-                    nextPages.push(link);
+                    nextPages.push({ page: page.link, link });
                 }
             });
         } catch(e) {
-            console.error(`Error scraping url=${page}`);
+            console.error(`Error scraping url=${page.link}`);
             console.error(e);
             if (onPageError && typeof onPageError === 'function') {
-                onPageError(e);
+                onPageError({ page: page.page, url: page.link, error: e });
             }
         }
     }

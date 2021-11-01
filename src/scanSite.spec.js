@@ -6,7 +6,7 @@ describe('scanSite()', () => {
     expect(typeof scanSite).toEqual('function');
   })
 
-  it('get all links from a url', async () => {
+  it('get all links from a url in recursive mode', async () => {
 		const URL = 'https://davidburgos.blog/';
 		const MAX_PAGES = 2;
     let error;
@@ -39,4 +39,27 @@ describe('scanSite()', () => {
       expect(error).toBeUndefined();
     }
   });
+
+	it('get the error from a link', async () => {
+		const URL = 'https://davidburgos.blog/tag/not-found';
+		let error;
+		try {
+			const options = {
+				recursive: false,
+				onPageError: (e) => {
+					expect(e).toBeDefined()
+					expect(e.url).toEqual(URL)
+					expect(e.error).toBeDefined()
+					expect(e.error.response).toBeDefined()
+					expect(e.error.response.status).toEqual(404)
+				}
+			}
+			await scanSite(URL, options);
+		} catch (e) {
+			console.log('>> catch', e);
+			error = e;
+		} finally {
+			expect(error).toBeUndefined();
+		}
+	})
 });
