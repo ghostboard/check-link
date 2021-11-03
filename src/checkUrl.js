@@ -24,7 +24,7 @@ module.exports = async function (url, options = {}) {
   } catch (e) {
     responseTime = (new Date().getTime()-start)/1000;
     isOK = false;
-    status = e.response.status;
+    status = e && e.response && e.response.status || 500;
   }
   const output = {
     url,
