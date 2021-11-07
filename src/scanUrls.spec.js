@@ -1,6 +1,6 @@
 const scanUrls = require('./scanUrls')
 
-describe.only('scanUrls()', () => {
+describe('scanUrls()', () => {
 	jest.setTimeout(15000);
 
 	it('is defined', () => {
@@ -15,6 +15,7 @@ describe.only('scanUrls()', () => {
 			'https://davidburgos.blog/about-me/',
 			'https://davidburgos.blog/popular-posts/',
 			'https://twitter.com/daburix',
+			'https://twitter.com/',
 			'https://davidburgos.blog/tag/english/',
 		];
 		let error;
