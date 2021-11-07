@@ -1,4 +1,3 @@
-
 const Timeout = require('await-timeout');
 const random = require('random');
 const getLinks = require('./getLinks');
@@ -13,24 +12,24 @@ module.exports = async function (url, options = {}) {
         onPageError,
         onEnd
     } = options;
-		const startTime = new Date().getTime();
-		let pages = 0;
+    const startTime = new Date().getTime();
+    let pages = 0;
     let lastRequestTime = new Date().getTime();
-		let result;
-		try {
-			result = await getLinks(url, options);
-		} catch (e) {
-			if (onPageError && typeof onPageError === 'function') {
-				onPageError({ url, error: e });
-			}
-		}
+    let result;
+    try {
+        result = await getLinks(url, options);
+    } catch (e) {
+        if (onPageError && typeof onPageError === 'function') {
+            onPageError({ url, error: e });
+        }
+    }
     if (!recursive) {
-	    if (onPageDone && typeof onPageDone === 'function') {
-		    onPageDone(result);
-	    }
-	    if (onEnd && typeof onEnd === 'function') {
-		    onEnd({ pages, executionTime: (new Date().getTime()-startTime)/1000 });
-	    }
+        if (onPageDone && typeof onPageDone === 'function') {
+            onPageDone(result);
+        }
+        if (onEnd && typeof onEnd === 'function') {
+            onEnd({ pages, executionTime: (new Date().getTime() - startTime) / 1000 });
+        }
     }
     const nextPages = [];
     result && result.links.forEach((link) => {
@@ -51,14 +50,14 @@ module.exports = async function (url, options = {}) {
             }
             lastRequestTime = new Date().getTime();
             const lastOutput = await getLinks(page.link, options);
-						pages += 1;
+            pages += 1;
             if (onPageDone && typeof onPageDone === 'function') {
                 onPageDone(lastOutput);
             }
             if (maxPages && pages >= maxPages) {
-	            if (onEnd && typeof onEnd === 'function') {
-		            return onEnd({ pages, executionTime: (new Date().getTime()-startTime)/1000 });
-	            }
+                if (onEnd && typeof onEnd === 'function') {
+                    return onEnd({ pages, executionTime: (new Date().getTime() - startTime) / 1000 });
+                }
             }
             lastOutput.links.forEach((link) => {
                 const isSameDomain = link.startsWith(url);
@@ -68,15 +67,15 @@ module.exports = async function (url, options = {}) {
                     nextPages.push({ page: page.link, link });
                 }
             });
-        } catch(e) {
+        } catch (e) {
             if (onPageError && typeof onPageError === 'function') {
                 onPageError({ page: page.page, url: page.link, error: e });
             }
         }
     }
-		const output = { pages, executionTime: (new Date().getTime()-startTime)/1000 };
+    const output = { pages, executionTime: (new Date().getTime() - startTime) / 1000 };
     if (onEnd && typeof onEnd === 'function') {
-	    onEnd(output);
+        onEnd(output);
     }
-		return output;
+    return output;
 }

@@ -16,6 +16,7 @@
     "await-timeout": "^1.1.1",
     "axios": "^0.24.0",
     "cheerio": "^1.0.0-rc.10",
+    "keyv": "^4.0.4",
     "random": "^3.0.6",
     "top-user-agents": "^1.0.39"
   }

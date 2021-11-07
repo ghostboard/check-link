@@ -1,17 +1,18 @@
 const scanSite = require('./scanSite')
 
 describe('scanSite()', () => {
+	jest.setTimeout(10000);
 	it('is defined', () => {
-    expect(scanSite).toBeDefined();
-    expect(typeof scanSite).toEqual('function');
-  })
+		expect(scanSite).toBeDefined();
+		expect(typeof scanSite).toEqual('function');
+	})
 
-  it('get all links from a url in recursive mode', async () => {
+	it('get all links from a url in recursive mode', async () => {
 		const URL = 'https://davidburgos.blog/';
 		const MAX_PAGES = 2;
-    let error;
+		let error;
 		let pagesDone = 0;
-    try {
+		try {
 			const options = {
 				recursive: true,
 				maxPages: MAX_PAGES,
@@ -32,13 +33,13 @@ describe('scanSite()', () => {
 					expect(result.executionTime).toBeGreaterThan(0);
 				}
 			}
-      await scanSite(URL, options);
-    } catch (e) {
-      error = e;
-    } finally {
-      expect(error).toBeUndefined();
-    }
-  });
+			await scanSite(URL, options);
+		} catch (e) {
+			error = e;
+		} finally {
+			expect(error).toBeUndefined();
+		}
+	});
 
 	it('get the error from a link', async () => {
 		const URL = 'https://davidburgos.blog/tag/not-found';
