@@ -3,6 +3,7 @@
 ## API
 
 - scanSite
+- scanUrls
 - checkUrl
 - getLinks
 
