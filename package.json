@@ -6,7 +6,10 @@
   "scripts": {
     "test": "jest"
   },
-  "author": "David Burgos @dburgos",
+  "author": {
+    "name": "David",
+    "email": "support+github@ghostboard.io"
+  },
   "license": "MIT",
   "devDependencies": {
     "jest": "^27.2.5"
