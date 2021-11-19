@@ -63,4 +63,27 @@ describe('scanSite()', () => {
 			expect(error).toBeUndefined();
 		}
 	})
+
+	it('scan site until maxMinutes param', async () => {
+		const URL = 'https://davidburgos.blog/';
+		const MAX_SECONDS = 5;
+		let error;
+		try {
+			const options = {
+				recursive: true,
+				maxPages: 2,
+				maxMinutes: MAX_SECONDS/60,
+				onEnd: (result) => {
+					expect(result.pages).toBeGreaterThan(0);
+					expect(result.executionTime).toBeGreaterThan(MAX_SECONDS);
+					expect(result.executionTime).toBeLessThan(MAX_SECONDS*2);
+				}
+			}
+			await scanSite(URL, options);
+		} catch (e) {
+			error = e;
+		} finally {
+			expect(error).toBeUndefined();
+		}
+	})
 });

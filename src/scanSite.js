@@ -8,6 +8,7 @@ module.exports = async function (url, options = {}) {
         minInterval = 1000,
         maxInterval = 3000,
         maxPages = false,
+	      maxMinutes = false,
         onPageDone,
         onPageError,
         onEnd
@@ -54,9 +55,13 @@ module.exports = async function (url, options = {}) {
             if (onPageDone && typeof onPageDone === 'function') {
                 onPageDone(lastOutput);
             }
-            if (maxPages && pages >= maxPages) {
+						const executionTime = (new Date().getTime() - startTime) / 1000;
+						const doneDueMaxPages = maxPages && pages >= maxPages;
+						const doneDueTime = maxMinutes && executionTime/60 >= maxMinutes;
+						const mustEndNow = doneDueMaxPages || doneDueTime;
+            if (mustEndNow) {
                 if (onEnd && typeof onEnd === 'function') {
-                    return onEnd({ pages, executionTime: (new Date().getTime() - startTime) / 1000 });
+                    return onEnd({ pages, executionTime });
                 }
             }
             lastOutput.links.forEach((link) => {
