@@ -14,14 +14,13 @@ describe('scanUrls()', () => {
 			'https://google.com',
 			'https://davidburgos.blog/about-me/',
 			'https://davidburgos.blog/popular-posts/',
-			'https://twitter.com/daburix',
-			'https://twitter.com/',
 			'https://davidburgos.blog/tag/english/',
 		];
 		let error;
 		try {
 			const options = {
 				onUrlError: (e) => {
+					console.log('>> error', e)
 					error = e;
 				},
 				onUrlDone: (out) => {

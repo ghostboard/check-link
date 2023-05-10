@@ -11,9 +11,13 @@ module.exports = async function (url, options = {}) {
   let responseTime;
   let isOK;
   let status;
+	let redirectsCount = 0;
+	let redirectedUrl;
   try {
     start = new Date().getTime();
-    const out = await axios.head(url, requestConfig).then((res) => res);
+    const out = await axios.head(url, requestConfig);
+		redirectsCount = out?.request?._redirectable?._redirectCount;
+		redirectedUrl = out?.request?._redirectable?._currentUrl;
     responseTime = (new Date().getTime() - start) / 1000;
     isOK = out && (out.status === 200 || out.statusText === 'OK');
     status = out.status;
@@ -25,7 +29,9 @@ module.exports = async function (url, options = {}) {
   if (!isOK) {
     try {
       start = new Date().getTime();
-      await axios.get(url, requestConfig).then((res) => res.data);
+      const out = await axios.get(url, requestConfig);
+	    redirectsCount = out?.request?._redirectable?._redirectCount;
+	    redirectedUrl = out?.request?._redirectable?._currentUrl;
       responseTime = (new Date().getTime() - start) / 1000;
     } catch (e) {
       responseTime = (new Date().getTime() - start) / 1000;
@@ -40,5 +46,9 @@ module.exports = async function (url, options = {}) {
     isOK,
     responseTime
   };
+	if (redirectsCount > 0) {
+		output.redirectsCount = redirectsCount;
+		output.redirectedUrl = redirectedUrl;
+	}
   return output;
 }
