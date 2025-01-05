@@ -15,6 +15,7 @@ describe('scanUrls()', () => {
 			'https://davidburgos.blog/about-me/',
 			'https://davidburgos.blog/popular-posts/',
 			'https://davidburgos.blog/tag/english/',
+			'http://davidburgos.blog'
 		];
 		let error;
 		try {
